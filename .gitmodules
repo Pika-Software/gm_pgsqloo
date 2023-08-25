@@ -1,0 +1,6 @@
+[submodule "third-party/libpqxx"]
+	path = third-party/libpqxx
+	url = https://github.com/jtv/libpqxx.git
+[submodule "third-party/fmt"]
+	path = third-party/fmt
+	url = https://github.com/fmtlib/fmt.git
