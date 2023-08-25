@@ -113,6 +113,8 @@ jobs:
 
       - name: Install libpq:i386
         run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update
           sudo apt install -f libpq-dev:i386
 
       - name: '[x32] Download garrysmod_common'
