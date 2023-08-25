@@ -89,6 +89,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          dpkg --add-architecture i386
           sudo apt install gcc-multilib g++-multilib libpq-dev libpq-dev:i386
 
       - name: '[x32] Download garrysmod_common'
