@@ -89,9 +89,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt install gcc-multilib g++-multilib libpq-dev libpq-dev:i386
+          sudo apt install gcc-multilib g++-multilib libpq-dev
 
       - name: '[x32] Download garrysmod_common'
         uses: actions/checkout@v3
