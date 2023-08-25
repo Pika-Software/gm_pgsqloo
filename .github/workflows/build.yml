@@ -91,6 +91,30 @@ jobs:
         run: |
           sudo apt install gcc-multilib g++-multilib libpq-dev
 
+      - name: '[x64] Download garrysmod_common'
+        uses: actions/checkout@v3
+        with:
+          repository: 'dankmolot/garrysmod_common'
+          ref: 'x86-64-cmake'
+          submodules: 'recursive'
+          path: 'third-party/garrysmod_common64'
+
+      - name: '[x64] Configure project (Serverside)'
+        run: |
+          cmake -B build64 -S . \
+            -DGARRYSMOD_COMMON_PATH="third-party/garrysmod_common64" \
+            -DAUTOINSTALL="." \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DGIT_BRANCH="$GIT_BRANCH" \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+
+      - name: '[x64] Build project (Serverside)'
+        run: cmake --build build64 -j -t pgsqloo
+
+      - name: Install libpq:i386
+        run: |
+          sudo apt install -f libpq-dev:i386
+
       - name: '[x32] Download garrysmod_common'
         uses: actions/checkout@v3
         with:
@@ -111,26 +135,6 @@ jobs:
 
       - name: '[x32] Build project (Serverside)'
         run: cmake --build build -j -t pgsqloo
-
-      - name: '[x64] Download garrysmod_common'
-        uses: actions/checkout@v3
-        with:
-          repository: 'dankmolot/garrysmod_common'
-          ref: 'x86-64-cmake'
-          submodules: 'recursive'
-          path: 'third-party/garrysmod_common64'
-
-      - name: '[x64] Configure project (Serverside)'
-        run: |
-          cmake -B build64 -S . \
-            -DGARRYSMOD_COMMON_PATH="third-party/garrysmod_common64" \
-            -DAUTOINSTALL="." \
-            -DBUILD_SHARED_LIBS=OFF \
-            -DGIT_BRANCH="$GIT_BRANCH" \
-            -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
-
-      - name: '[x64] Build project (Serverside)'
-        run: cmake --build build64 -j -t pgsqloo
 
       - name: "Upload artifacts"
         uses: actions/upload-artifact@v3
