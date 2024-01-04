@@ -32,17 +32,7 @@ add_subdirectory(cmake)
 
 # Include libpqxx
 if(WIN32)
-    set(PostgreSQL_FOUND TRUE)
-    SET(PostgreSQL_ROOT "${CMAKE_CURRENT_LIST_DIR}/libpq")
-    set(PostgreSQL_INCLUDE_DIRS "${PostgreSQL_ROOT}/include")
-    set(PostgreSQL_LIBRARIES 
-        "${PostgreSQL_ROOT}/lib/win64/libpq.lib"
-        "${PostgreSQL_ROOT}/lib/win64/libpgcommon.lib"
-        "${PostgreSQL_ROOT}/lib/win64/libpgport.lib"
-        "${PostgreSQL_ROOT}/lib/win64/libssl.lib"
-        "${PostgreSQL_ROOT}/lib/win64/libcrypto.lib"
-        "Secur32"
-    )
+    download_libpq()
 endif()
 
 add_subdirectory(third-party/libpqxx)
