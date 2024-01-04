@@ -20,19 +20,20 @@ env:
 
 jobs:
   build:
-    matrix:
-      os: [windows-latest, ubuntu-20.04]
-      arch: [x64, x86]
-      include:
-        - os: windows-latest
-          arch: x64
-          CMAKE_ARCH_FLAG: -A x64
-        - os: windows-latest
-          arch: x86
-          CMAKE_ARCH_FLAG: -A Win32
-        - os: ubuntu-latest
-          arch: x86
-          CMAKE_ARCH_FLAG: -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32"
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-20.04]
+        arch: [x64, x86]
+        include:
+          - os: windows-latest
+            arch: x64
+            CMAKE_ARCH_FLAG: -A x64
+          - os: windows-latest
+            arch: x86
+            CMAKE_ARCH_FLAG: -A Win32
+          - os: ubuntu-latest
+            arch: x86
+            CMAKE_ARCH_FLAG: -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32"
 
     runs-on: ${{ matrix.os }}
 
