@@ -32,6 +32,7 @@ namespace GLua = GarrysMod::Lua;
             return ret;                                                        \
         } catch (const std::exception& e) {                                    \
             lua->ThrowError(e.what());                                         \
+            return 0;                                                          \
         }                                                                      \
     }                                                                          \
     int name##__Imp([[maybe_unused]] GarrysMod::Lua::ILuaInterface* lua)
