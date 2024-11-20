@@ -30,7 +30,7 @@ jobs:
             CMAKE_ARCH_FLAG: -A x64
           - os: windows-latest
             arch: x86
-            CMAKE_ARCH_FLAG: -A Win32 -DVCPKG_TARGET_TRIPLET=x86-windows
+            CMAKE_ARCH_FLAG: -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" -DVCPKG_TARGET_TRIPLET=x86-windows
           - os: ubuntu-20.04
             arch: x86
             CMAKE_ARCH_FLAG: -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" -DVCPKG_TARGET_TRIPLET=x86-linux
