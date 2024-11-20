@@ -4,6 +4,7 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 #include <libpq-fe.h>
 
+#include <algorithm>
 #include <chrono>
 #include <exception>
 #include <memory>
