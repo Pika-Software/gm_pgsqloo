@@ -68,12 +68,6 @@ jobs:
       - name: Build project
         run: cmake --build build -j -t async_postgres --config ${{env.BUILD_TYPE}}
 
-      - name: Configure project (Clientside)
-        run: cmake --preset=vcpkg -B build -S . -DCLIENT_DLL=ON
-      
-      - name: Build project (Clientside)
-        run: cmake --build build -j -t async_postgres --config ${{env.BUILD_TYPE}}
-
       - name: Strip debug information from binaries and keep them outside (Ubuntu)
         if: ${{ matrix.os == 'ubuntu-20.04' }}
         run: |
