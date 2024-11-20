@@ -41,11 +41,12 @@ jobs:
 
     steps:
       - uses: lukka/get-cmake@latest
-      - uses: lukka/run-vcpkg@v11
 
       - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+
+      - uses: lukka/run-vcpkg@v11
 
       - name: Install dependencies Ubuntu x86
         if: ${{ matrix.os == 'ubuntu-20.04' && matrix.arch == 'x86' }}
