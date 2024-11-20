@@ -1,5 +1,4 @@
 #include <Platform.hpp>
-#include <format>
 
 #include "async_postgres.hpp"
 

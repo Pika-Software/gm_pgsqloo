@@ -42,10 +42,10 @@ project(gmsv_async_postgres
 # Enable -fPIC flag
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Require C++ 20
-set(CMAKE_CXX_STANDARD 20)
+# Require C++ 17
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Enable multithreaded compilation on Windows
 if(MSVC)
