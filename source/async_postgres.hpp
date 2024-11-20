@@ -36,7 +36,7 @@ namespace GLua = GarrysMod::Lua;
     }                                                                          \
     int name##__Imp([[maybe_unused]] GarrysMod::Lua::ILuaInterface* lua)
 
-namespace pgsqloo {
+namespace async_postgres {
     struct SocketStatus {
         bool read_ready = false;
         bool write_ready = false;
@@ -85,4 +85,4 @@ namespace pgsqloo {
     std::string_view get_string(GLua::ILuaInterface* lua, int index = -1);
     void pcall(GLua::ILuaInterface* lua, int nargs, int nresults);
     SocketStatus check_socket_status(PGconn* conn);
-};  // namespace pgsqloo
+};  // namespace async_postgres

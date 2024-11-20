@@ -1,8 +1,8 @@
-#include "pgsqloo.hpp"
+#include "async_postgres.hpp"
 
-using namespace pgsqloo;
+using namespace async_postgres;
 
-std::vector<Connection*> pgsqloo::connections = {};
+std::vector<Connection*> async_postgres::connections = {};
 
 struct ConnectionEvent {
     PGconnPtr conn;
@@ -23,8 +23,8 @@ inline bool socket_is_ready(PGconn* conn, PostgresPollingStatusType status) {
     return true;
 }
 
-void pgsqloo::connect(GLua::ILuaInterface* lua, std::string_view url,
-                      GLua::AutoReference&& callback) {
+void async_postgres::connect(GLua::ILuaInterface* lua, std::string_view url,
+                             GLua::AutoReference&& callback) {
     auto conn = PGconnPtr(PQconnectStart(url.data()), &PQfinish);
     auto conn_ptr = conn.get();
 
@@ -84,7 +84,7 @@ inline bool poll_pending_connection(GLua::ILuaInterface* lua,
     return false;
 }
 
-void pgsqloo::process_pending_connections(GLua::ILuaInterface* lua) {
+void async_postgres::process_pending_connections(GLua::ILuaInterface* lua) {
     for (auto it = pending_connections.begin();
          it != pending_connections.end();) {
         auto& event = *it;

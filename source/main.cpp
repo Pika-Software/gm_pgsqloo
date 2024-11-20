@@ -1,22 +1,24 @@
 #include <GarrysMod/Lua/Interface.h>
 
-#include "pgsqloo.hpp"
+#include "async_postgres.hpp"
 
-int pgsqloo::connection_meta = 0;
+int async_postgres::connection_meta = 0;
 
-#define lua_connection_state() \
-    lua->GetUserType<pgsqloo::Connection>(1, pgsqloo::connection_meta)
+#define lua_connection_state()                    \
+    lua->GetUserType<async_postgres::Connection>( \
+        1, async_postgres::connection_meta)
 
 lua_protected_fn(gc_connection) {
     delete lua_connection_state();
     return 0;
 }
 
-pgsqloo::Connection::~Connection() {
+async_postgres::Connection::~Connection() {
     // remove connection from global list
     // so event loop doesn't try to process it
-    pgsqloo::connections.erase(std::find(pgsqloo::connections.begin(),
-                                         pgsqloo::connections.end(), this));
+    async_postgres::connections.erase(
+        std::find(async_postgres::connections.begin(),
+                  async_postgres::connections.end(), this));
 }
 
 lua_protected_fn(index_connection) {
@@ -31,7 +33,7 @@ lua_protected_fn(index_connection) {
 
     // is it alright if I don't pop previous stack values?
 
-    lua->PushMetaTable(pgsqloo::connection_meta);
+    lua->PushMetaTable(async_postgres::connection_meta);
     lua->Push(2);
     lua->GetTable(-2);
 
@@ -172,11 +174,11 @@ lua_protected_fn(newindex_connection) {
 // }
 
 lua_protected_fn(loop) {
-    pgsqloo::process_pending_connections(lua);
+    async_postgres::process_pending_connections(lua);
 
-    for (auto state : pgsqloo::connections) {
-        pgsqloo::process_notifications(lua, state);
-        pgsqloo::process_queries(lua, state);
+    for (auto state : async_postgres::connections) {
+        async_postgres::process_notifications(lua, state);
+        async_postgres::process_queries(lua, state);
     }
 
     return 0;
@@ -189,20 +191,20 @@ lua_protected_fn(connect) {
     auto url = lua->GetString(1);
     GLua::AutoReference callback(lua, 2);
 
-    pgsqloo::connect(lua, url, std::move(callback));
+    async_postgres::connect(lua, url, std::move(callback));
 
     return 0;
 }
 
 lua_protected_fn(query) {
-    lua->CheckType(1, pgsqloo::connection_meta);
+    lua->CheckType(1, async_postgres::connection_meta);
     lua->CheckType(2, GLua::Type::String);
     lua->CheckType(3, GLua::Type::Function);
 
     auto state = lua_connection_state();
 
-    pgsqloo::SimpleCommand command = {lua->GetString(2)};
-    pgsqloo::Query query = {std::move(command)};
+    async_postgres::SimpleCommand command = {lua->GetString(2)};
+    async_postgres::Query query = {std::move(command)};
     if (!lua->IsType(3, GLua::Type::Nil)) {
         query.callback = GLua::AutoReference(lua, 3);
     }
@@ -232,7 +234,7 @@ lua_protected_fn(query) {
 // }
 
 inline void register_connection_mt(GLua::ILuaInterface* lua) {
-    pgsqloo::connection_meta = lua->CreateMetaTable("PGconn");
+    async_postgres::connection_meta = lua->CreateMetaTable("PGconn");
 
     lua->PushCFunction(index_connection);
     lua->SetField(-2, "__index");
@@ -255,14 +257,14 @@ inline void make_global_table(GLua::ILuaInterface* lua) {
     lua->PushCFunction(connect);
     lua->SetField(-2, "connect");
 
-    lua->SetField(GLua::INDEX_GLOBAL, "pg");
+    lua->SetField(GLua::INDEX_GLOBAL, "async_postgres");
 }
 
 inline void register_loop_hook(GLua::ILuaInterface* lua) {
     lua->GetField(GLua::INDEX_GLOBAL, "hook");
     lua->GetField(-1, "Add");
     lua->PushString("Think");
-    lua->PushString("pg_loop");
+    lua->PushString("async_postgres_loop");
     lua->PushCFunction(loop);
     lua->Call(3, 0);
     lua->Pop();

@@ -1,6 +1,6 @@
-#include "pgsqloo.hpp"
+#include "async_postgres.hpp"
 
-using namespace pgsqloo;
+using namespace async_postgres;
 
 bool push_on_notify(GLua::ILuaInterface* lua, Connection* state) {
     state->lua_table.Push();
@@ -14,8 +14,8 @@ bool push_on_notify(GLua::ILuaInterface* lua, Connection* state) {
     return true;
 }
 
-void pgsqloo::process_notifications(GLua::ILuaInterface* lua,
-                                    Connection* state) {
+void async_postgres::process_notifications(GLua::ILuaInterface* lua,
+                                           Connection* state) {
     if (!push_on_notify(lua, state)) {
         return;
     }

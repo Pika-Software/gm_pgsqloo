@@ -1,7 +1,7 @@
 #include <tuple>
 #include <vector>
 
-#include "pgsqloo.hpp"
+#include "async_postgres.hpp"
 
 struct FieldInfo {
     const char* name;
@@ -9,7 +9,8 @@ struct FieldInfo {
     Oid type;
 };
 
-void pgsqloo::create_result_table(GLua::ILuaInterface* lua, PGresult* result) {
+void async_postgres::create_result_table(GLua::ILuaInterface* lua,
+                                         PGresult* result) {
     lua->CreateTable();
 
     std::vector<FieldInfo> fields;

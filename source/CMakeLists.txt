@@ -4,23 +4,23 @@ configure_file(config.hpp.in ${CMAKE_BINARY_DIR}/include/config.hpp)
 file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_LIST_DIR} *.cpp *.hpp)
 source_group(TREE ${CMAKE_CURRENT_LIST_DIR} PREFIX "Sources" FILES ${SOURCES})
 
-add_library(pgsqloo SHARED ${SOURCES})
+add_library(async_postgres SHARED ${SOURCES})
 
-target_link_libraries(pgsqloo PRIVATE
+target_link_libraries(async_postgres PRIVATE
     gmod::common
     gmod::helpers
     PostgreSQL::PostgreSQL
 )
 
-target_include_directories(pgsqloo PRIVATE 
+target_include_directories(async_postgres PRIVATE 
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_BINARY_DIR}/include
 )
 
-set_gmod_suffix_prefix(pgsqloo)
+set_gmod_suffix_prefix(async_postgres)
 
 # Autoinstall
 set(AUTOINSTALL "" CACHE PATH "Autoinstall path")
 if(IS_DIRECTORY ${AUTOINSTALL})
-    autoinstall(pgsqloo ${AUTOINSTALL})
+    autoinstall(async_postgres ${AUTOINSTALL})
 endif()

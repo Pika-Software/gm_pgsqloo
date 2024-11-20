@@ -1,11 +1,12 @@
 #include <Platform.hpp>
 #include <format>
 
-#include "pgsqloo.hpp"
+#include "async_postgres.hpp"
 
-using namespace pgsqloo;
+using namespace async_postgres;
 
-std::string_view pgsqloo::get_string(GLua::ILuaInterface* lua, int index) {
+std::string_view async_postgres::get_string(GLua::ILuaInterface* lua,
+                                            int index) {
     unsigned int len = 0;
     const char* str = lua->GetString(index, &len);
     return {str, len};
@@ -23,7 +24,7 @@ void print_stack(GLua::ILuaInterface* lua) {
     }
 }
 
-void pgsqloo::pcall(GLua::ILuaInterface* lua, int nargs, int nresults) {
+void async_postgres::pcall(GLua::ILuaInterface* lua, int nargs, int nresults) {
     lua->GetField(GLua::INDEX_GLOBAL, "ErrorNoHaltWithStack");
     lua->Insert(-nargs - 2);
     if (lua->PCall(nargs, nresults, -nargs - 2) != 0) {
@@ -40,7 +41,7 @@ void pgsqloo::pcall(GLua::ILuaInterface* lua, int nargs, int nresults) {
 #include <poll.h>
 #endif
 
-SocketStatus pgsqloo::check_socket_status(PGconn* conn) {
+SocketStatus async_postgres::check_socket_status(PGconn* conn) {
     SocketStatus status = {};
     int fd = PQsocket(conn);
     if (fd < 0) {

@@ -33,10 +33,10 @@ if(NOT DEFINED GIT_BRANCH)
     )
 endif()
 
-project(gm_pgsqloo 
+project(gmsv_async_postgres 
     VERSION 1.0.0
     LANGUAGES C CXX
-    HOMEPAGE_URL "https://github.com/Pika-Software/gm_pgsqloo"
+    HOMEPAGE_URL "https://github.com/Pika-Software/gmsv_async_postgres"
 )
 
 # Enable -fPIC flag

@@ -1,6 +1,6 @@
-#include "pgsqloo.hpp"
+#include "async_postgres.hpp"
 
-using namespace pgsqloo;
+using namespace async_postgres;
 
 // returns true if query was sent
 // returns false on error
@@ -47,7 +47,8 @@ bool bad_result(PGresult* result) {
            status == PGRES_FATAL_ERROR;
 }
 
-void pgsqloo::process_queries(GLua::ILuaInterface* lua, Connection* state) {
+void async_postgres::process_queries(GLua::ILuaInterface* lua,
+                                     Connection* state) {
     if (state->queries.empty()) {
         // no queries to process
         return;
