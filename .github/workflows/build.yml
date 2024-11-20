@@ -27,7 +27,6 @@ jobs:
         include:
           - os: windows-latest
             arch: x64
-            CMAKE_ARCH_FLAG: -A x64
           - os: windows-latest
             arch: x86
             CMAKE_ARCH_FLAG: -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" -DVCPKG_TARGET_TRIPLET=x86-windows
