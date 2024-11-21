@@ -24,6 +24,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-20.04]
         arch: [x64, x86]
+        CMAKE_ARCH_FLAG: --preset=unix
         include:
           - os: windows-latest
             arch: x64
@@ -63,7 +64,7 @@ jobs:
           path: third-party/garrysmod_common
 
       - name: Configure project
-        run: cmake --preset=vcpkg -B build -S . ${{matrix.CMAKE_ARCH_FLAG}} -DGARRYSMOD_COMMON_PATH="third-party/garrysmod_common" -DAUTOINSTALL="." -DBUILD_SHARED_LIBS=OFF -DGIT_BRANCH="${{env.GIT_BRANCH}}" -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}"
+        run: cmake -B build -S . ${{matrix.CMAKE_ARCH_FLAG}} -DGARRYSMOD_COMMON_PATH="third-party/garrysmod_common" -DAUTOINSTALL="." -DGIT_BRANCH="${{env.GIT_BRANCH}}" -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}"
 
       - name: Build project
         run: cmake --build build -j -t async_postgres --config ${{env.BUILD_TYPE}}
