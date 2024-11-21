@@ -3,12 +3,26 @@
     "configurePresets": [
         {
             "name": "vcpkg",
-            "generator": "Ninja",
             "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "BUILD_SHARED_LIBS": "OFF"
             }
+        },
+        {
+            "name": "x64-windows",
+            "inherits": "vcpkg",
+            "architecture": "x64"
+        },
+        {
+            "name": "x86-windows",
+            "inherits": "vcpkg",
+            "architecture": "x86"
+        },
+        {
+            "name": "unix",
+            "inherits": "vcpkg",
+            "generator": "Ninja"
         }
     ]
 }
