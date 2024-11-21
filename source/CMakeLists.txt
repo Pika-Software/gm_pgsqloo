@@ -12,6 +12,10 @@ target_link_libraries(async_postgres PRIVATE
     PostgreSQL::PostgreSQL
 )
 
+if(WIN32)
+    target_link_libraries(async_postgres PRIVATE ws2_32)
+endif()
+
 target_include_directories(async_postgres PRIVATE 
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_BINARY_DIR}/include
