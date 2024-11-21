@@ -14,13 +14,19 @@
             "name": "x64-windows",
             "inherits": "vcpkg",
             "generator": "Visual Studio 17 2022",
-            "architecture": "x64"
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows-static"
+            }
         },
         {
             "name": "x86-windows",
             "inherits": "vcpkg",
             "generator": "Visual Studio 17 2022",
-            "architecture": "Win32"
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows-static"
+            }
         },
         {
             "name": "unix",
