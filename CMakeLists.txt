@@ -47,11 +47,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Enable multithreaded compilation on Windows
-if(MSVC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "/MP")
-endif()
-
 find_package(PostgreSQL REQUIRED)
 find_package(GarrysmodCommon REQUIRED)
 
