@@ -20,7 +20,7 @@
             "name": "x86-windows",
             "inherits": "vcpkg",
             "generator": "Visual Studio 17 2022",
-            "architecture": "x86"
+            "architecture": "Win32"
         },
         {
             "name": "unix",
