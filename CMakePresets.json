@@ -4,6 +4,7 @@
         {
             "name": "vcpkg",
             "binaryDir": "${sourceDir}/build",
+            "hidden": true,
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "BUILD_SHARED_LIBS": "OFF"

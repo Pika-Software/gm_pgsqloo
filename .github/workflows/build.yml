@@ -67,7 +67,7 @@ jobs:
           path: third-party/garrysmod_common
 
       - name: Configure project
-        run: cmake -B build -S . ${{matrix.CMAKE_ARCH_FLAG}} -DGARRYSMOD_COMMON_PATH="third-party/garrysmod_common" -DAUTOINSTALL="." -DGIT_BRANCH="${{env.GIT_BRANCH}}" -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}"
+        run: cmake ${{matrix.CMAKE_ARCH_FLAG}} -DGARRYSMOD_COMMON_PATH="third-party/garrysmod_common" -DAUTOINSTALL="." -DGIT_BRANCH="${{env.GIT_BRANCH}}" -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}"
 
       - name: Build project
         run: cmake --build build -j -t async_postgres --config ${{env.BUILD_TYPE}}
