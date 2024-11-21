@@ -24,7 +24,6 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-20.04]
         arch: [x64, x86]
-        CMAKE_ARCH_FLAG: --preset=unix
         include:
           - os: windows-latest
             arch: x64
@@ -33,10 +32,14 @@ jobs:
             arch: x86
             CMAKE_ARCH_FLAG: --preset=x86-windows
           - os: ubuntu-20.04
+            arch: x64
+            CMAKE_ARCH_FLAG: --preset=unix
+          - os: ubuntu-20.04
             arch: x86
-            CMAKE_ARCH_FLAG: -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" -DVCPKG_TARGET_TRIPLET=x86-linux
+            CMAKE_ARCH_FLAG: --preset=unix -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" -DVCPKG_TARGET_TRIPLET=x86-linux
           - os: macos-13
             arch: x64
+            CMAKE_ARCH_FLAG: --preset=unix
 
     runs-on: ${{ matrix.os }}
 
