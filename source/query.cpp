@@ -7,6 +7,19 @@ using namespace async_postgres;
 inline bool send_query(PGconn* conn, Query& query) {
     if (const auto* command = std::get_if<SimpleCommand>(&query.command)) {
         return PQsendQuery(conn, command->command.c_str()) == 1;
+    } else if (const auto* command =
+                   std::get_if<ParameterizedCommand>(&query.command)) {
+        size_t nParams = command->values.size();
+        std::vector<const char*> paramValues(nParams);
+        for (size_t i = 0; i < nParams; i++) {
+            paramValues[i] = command->values[i].c_str();
+        }
+
+        bool success =
+            PQsendQueryParams(conn, command->command.c_str(), nParams, nullptr,
+                              paramValues.data(), nullptr, nullptr, 0) == 1;
+
+        return success;
     }
     return false;
 }
@@ -47,10 +60,17 @@ bool bad_result(PGresult* result) {
            status == PGRES_FATAL_ERROR;
 }
 
+static bool reseted = false;
+
 void async_postgres::process_queries(GLua::ILuaInterface* lua,
                                      Connection* state) {
     if (state->queries.empty()) {
         // no queries to process
+        return;
+    }
+
+    if (state->reset_event) {
+        // don't process queries while reconnecting
         return;
     }
 
@@ -64,6 +84,12 @@ void async_postgres::process_queries(GLua::ILuaInterface* lua,
 
         query.sent = true;
         query.flushed = PQflush(state->conn.get()) == 0;
+    }
+
+    if (query.flushed && !reseted) {
+        reset(lua, state, {});
+        reseted = true;
+        return;
     }
 
     if (!poll_query(state->conn.get(), query)) {

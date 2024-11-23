@@ -29,9 +29,25 @@
             }
         },
         {
-            "name": "unix",
+            "name": "x64-linux",
             "inherits": "vcpkg",
-            "generator": "Ninja"
+            "generator": "Ninja",
+            "architecture": "x64"
+        },
+        {
+            "name": "x86-linux",
+            "inherits": "vcpkg",
+            "generator": "Ninja",
+            "architecture": "x86"
+        },
+        {
+            "name": "x64-macos",
+            "inherits": "vcpkg",
+            "generator": "Ninja",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-osx"
+            }
         }
     ]
 }

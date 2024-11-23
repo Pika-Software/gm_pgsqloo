@@ -4,6 +4,21 @@ using namespace async_postgres;
 
 std::vector<Connection*> async_postgres::connections = {};
 
+Connection::Connection(GLua::ILuaInterface* lua, PGconnPtr&& conn)
+    : conn(std::move(conn)) {
+    lua->CreateTable();
+    this->lua_table = GLua::AutoReference(lua);
+
+    // add connection to global list
+    connections.push_back(this);
+}
+
+Connection::~Connection() {
+    // remove connection from global list
+    // so event loop doesn't try to process it
+    connections.erase(std::find(connections.begin(), connections.end(), this));
+}
+
 struct ConnectionEvent {
     PGconnPtr conn;
     GLua::AutoReference callback;
@@ -47,22 +62,14 @@ void async_postgres::connect(GLua::ILuaInterface* lua, std::string_view url,
 inline bool poll_pending_connection(GLua::ILuaInterface* lua,
                                     ConnectionEvent& event) {
     if (!socket_is_ready(event.conn.get(), event.status)) {
-        lua->Msg("socket is not ready (%s)\n",
-                 event.status == PGRES_POLLING_READING ? "reading" : "writing");
         return false;
     }
 
     // TODO: handle reset
 
     event.status = PQconnectPoll(event.conn.get());
-    lua->Msg("status: %d (%d)\n", event.status, PQstatus(event.conn.get()));
     if (event.status == PGRES_POLLING_OK) {
-        auto state = new Connection{std::move(event.conn)};
-
-        lua->CreateTable();
-        state->lua_table = GLua::AutoReference(lua);
-
-        connections.push_back(state);
+        auto state = new Connection(lua, std::move(event.conn));
 
         event.callback.Push();
         lua->PushBool(true);
@@ -94,5 +101,52 @@ void async_postgres::process_pending_connections(GLua::ILuaInterface* lua) {
         } else {
             ++it;
         }
+    }
+}
+
+void async_postgres::reset(GLua::ILuaInterface* lua, Connection* state,
+                           GLua::AutoReference&& callback) {
+    if (!state->reset_event) {
+        if (PQresetStart(state->conn.get()) == 0) {
+            throw std::runtime_error(PQerrorMessage(state->conn.get()));
+        }
+
+        state->reset_event = ResetEvent();
+    }
+
+    if (callback) {
+        state->reset_event->callbacks.push_back(std::move(callback));
+    }
+}
+
+void async_postgres::process_reset(GLua::ILuaInterface* lua,
+                                   Connection* state) {
+    if (!state->reset_event) {
+        return;
+    }
+
+    auto& event = state->reset_event.value();
+    if (!socket_is_ready(state->conn.get(), state->reset_event->status)) {
+        return;
+    }
+
+    event.status = PQresetPoll(state->conn.get());
+    if (event.status == PGRES_POLLING_OK) {
+        for (auto& callback : event.callbacks) {
+            callback.Push();
+            lua->PushBool(true);
+            pcall(lua, 1, 0);
+        }
+
+        state->reset_event.reset();
+    } else if (event.status == PGRES_POLLING_FAILED) {
+        for (auto& callback : event.callbacks) {
+            callback.Push();
+            lua->PushBool(false);
+            lua->PushString(PQerrorMessage(state->conn.get()));
+            pcall(lua, 2, 0);
+        }
+
+        state->reset_event.reset();
     }
 }

@@ -34,13 +34,13 @@ jobs:
             CMAKE_ARCH_FLAG: --preset=x86-windows
           - os: ubuntu-20.04
             arch: x64
-            CMAKE_ARCH_FLAG: --preset=unix
+            CMAKE_ARCH_FLAG: --preset=x64-linux
           - os: ubuntu-20.04
             arch: x86
-            CMAKE_ARCH_FLAG: --preset=unix -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" -DVCPKG_TARGET_TRIPLET=x86-linux
+            CMAKE_ARCH_FLAG: --preset=x86-linux
           - os: macos-13
             arch: x64
-            CMAKE_ARCH_FLAG: --preset=unix
+            CMAKE_ARCH_FLAG: --preset=x64-macos
 
     runs-on: ${{ matrix.os }}
 
