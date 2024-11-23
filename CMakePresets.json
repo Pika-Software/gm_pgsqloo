@@ -31,14 +31,17 @@
         {
             "name": "x64-linux",
             "inherits": "vcpkg",
-            "generator": "Ninja",
-            "architecture": "x64"
+            "generator": "Ninja"
         },
         {
             "name": "x86-linux",
             "inherits": "vcpkg",
             "generator": "Ninja",
-            "architecture": "x86"
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-m32",
+                "CMAKE_C_FLAGS": "-m32",
+                "VCPKG_TARGET_TRIPLET": "x86-linux"
+            }
         },
         {
             "name": "x64-macos",
