@@ -47,9 +47,9 @@
             "name": "x64-macos",
             "inherits": "vcpkg",
             "generator": "Ninja",
-            "architecture": "x64",
             "cacheVariables": {
-                "VCPKG_TARGET_TRIPLET": "x64-osx"
+                "VCPKG_TARGET_TRIPLET": "x64-osx",
+                "CMAKE_OSX_ARCHITECTURES": "x64"
             }
         }
     ]
