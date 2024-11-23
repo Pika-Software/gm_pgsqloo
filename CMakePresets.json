@@ -49,7 +49,7 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-osx",
-                "CMAKE_OSX_ARCHITECTURES": "x64"
+                "CMAKE_OSX_ARCHITECTURES": "x86_64"
             }
         }
     ]
