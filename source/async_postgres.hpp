@@ -1,5 +1,4 @@
 #pragma once
-
 #include <GarrysMod/Lua/AutoReference.h>
 #include <GarrysMod/Lua/Interface.h>
 #include <GarrysMod/Lua/LuaInterface.h>
@@ -14,6 +13,8 @@
 #include <string_view>
 #include <variant>
 #include <vector>
+
+#include "safe_pg.hpp"
 
 namespace GLua = GarrysMod::Lua;
 
@@ -68,17 +69,15 @@ namespace async_postgres {
         PostgresPollingStatusType status = PGRES_POLLING_WRITING;
     };
 
-    using PGconnPtr = std::unique_ptr<PGconn, decltype(&PQfinish)>;
-
     struct Connection {
-        PGconnPtr conn;
+        pg::conn conn;
         GLua::AutoReference lua_table;
         std::queue<Query> queries;
         std::optional<ResetEvent> reset_event;
         bool receive_notifications =
             false;  // enabled if on_notify lua field is set
 
-        Connection(GLua::ILuaInterface* lua, PGconnPtr&& conn);
+        Connection(GLua::ILuaInterface* lua, pg::conn&& conn);
         ~Connection();
     };
 

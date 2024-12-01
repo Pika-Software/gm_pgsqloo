@@ -4,7 +4,7 @@ using namespace async_postgres;
 
 std::vector<Connection*> async_postgres::connections = {};
 
-Connection::Connection(GLua::ILuaInterface* lua, PGconnPtr&& conn)
+Connection::Connection(GLua::ILuaInterface* lua, pg::conn&& conn)
     : conn(std::move(conn)) {
     lua->CreateTable();
     this->lua_table = GLua::AutoReference(lua);
@@ -20,7 +20,7 @@ Connection::~Connection() {
 }
 
 struct ConnectionEvent {
-    PGconnPtr conn;
+    pg::conn conn;
     GLua::AutoReference callback;
     PostgresPollingStatusType status = PGRES_POLLING_WRITING;
     bool is_reset = false;
@@ -40,17 +40,16 @@ inline bool socket_is_ready(PGconn* conn, PostgresPollingStatusType status) {
 
 void async_postgres::connect(GLua::ILuaInterface* lua, std::string_view url,
                              GLua::AutoReference&& callback) {
-    auto conn = PGconnPtr(PQconnectStart(url.data()), &PQfinish);
-    auto conn_ptr = conn.get();
+    auto conn = pg::connectStart(url);
 
     if (!conn) {
         // funnily enough, this probably will instead throw a std::bad_alloc
         throw std::runtime_error("failed to allocate connection");
     }
 
-    if (PQstatus(conn_ptr) == CONNECTION_BAD ||
-        PQsetnonblocking(conn_ptr, 1) != 0) {
-        throw std::runtime_error(PQerrorMessage(conn_ptr));
+    if (PQstatus(conn.get()) == CONNECTION_BAD ||
+        PQsetnonblocking(conn.get(), 1) != 0) {
+        throw std::runtime_error(PQerrorMessage(conn.get()));
     }
 
     auto event = ConnectionEvent{std::move(conn), std::move(callback)};
@@ -64,8 +63,6 @@ inline bool poll_pending_connection(GLua::ILuaInterface* lua,
     if (!socket_is_ready(event.conn.get(), event.status)) {
         return false;
     }
-
-    // TODO: handle reset
 
     event.status = PQconnectPoll(event.conn.get());
     if (event.status == PGRES_POLLING_OK) {

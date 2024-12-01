@@ -99,7 +99,7 @@ void async_postgres::process_queries(GLua::ILuaInterface* lua,
     }
 
     while (PQisBusy(state->conn.get()) == 0) {
-        auto* result = PQgetResult(state->conn.get());
+        auto result = pg::getResult(state->conn);
         if (!result) {
             // query is done
             state->queries.pop();
@@ -108,16 +108,15 @@ void async_postgres::process_queries(GLua::ILuaInterface* lua,
 
         if (query.callback) {
             query.callback.Push();
-            if (!bad_result(result)) {
+            if (!bad_result(result.get())) {
                 lua->PushBool(true);
-                create_result_table(lua, result);
+                create_result_table(lua, result.get());
             } else {
                 lua->PushBool(false);
-                lua->PushString(PQresultErrorMessage(result));
+                lua->PushString(PQresultErrorMessage(result.get()));
             }
 
             pcall(lua, 2, 0);
         }
-        PQclear(result);
     }
 }

@@ -33,8 +33,7 @@ void async_postgres::process_notifications(GLua::ILuaInterface* lua,
         return;
     }
 
-    PGnotify* notify;
-    while ((notify = PQnotifies(state->conn.get()))) {
+    while (auto notify = pg::getNotify(state->conn)) {
         if (push_on_notify(lua, state)) {
             lua->PushString(notify->relname);  // arg 1 channel name
             lua->PushString(notify->extra);    // arg 2 payload
@@ -42,7 +41,5 @@ void async_postgres::process_notifications(GLua::ILuaInterface* lua,
 
             pcall(lua, 3, 0);
         }
-
-        PQfreemem(notify);
     }
 }
