@@ -60,8 +60,6 @@ bool bad_result(PGresult* result) {
            status == PGRES_FATAL_ERROR;
 }
 
-static bool reseted = false;
-
 void async_postgres::process_queries(GLua::ILuaInterface* lua,
                                      Connection* state) {
     if (state->queries.empty()) {
@@ -84,12 +82,6 @@ void async_postgres::process_queries(GLua::ILuaInterface* lua,
 
         query.sent = true;
         query.flushed = PQflush(state->conn.get()) == 0;
-    }
-
-    if (query.flushed && !reseted) {
-        reset(lua, state, {});
-        reseted = true;
-        return;
     }
 
     if (!poll_query(state->conn.get(), query)) {
